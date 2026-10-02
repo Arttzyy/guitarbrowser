@@ -45,12 +45,6 @@
   // natives untouched while the recorder and the button keep working.
   var NETWORK_MODE = "off";
   var MAX_ERRORS = 20;
-
-  var KINDS = {
-    compile: { badge: "Build error", tone: "warn", headline: "The latest code change didn't compile" },
-    runtime: { badge: "Runtime error", tone: "err", headline: "The app hit an error while running" },
-    rejection: { badge: "Unhandled rejection", tone: "err", headline: "A background operation failed" },
-    resource: { badge: "Load failure", tone: "neutral", headline: "Part of the app failed to load" },
   };
 
   // If overlay code itself ever throws, disable the overlay permanently rather than
