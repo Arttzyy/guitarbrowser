@@ -1,0 +1,736 @@
+:root {
+    --bg-dark: #333333;
+    --bg-darker: #222222;
+    --bg-sidebar: #111111;
+    --text-main: #ffffff;
+    --text-sub: #aaaaaa;
+    --dynamic-color: rgba(94, 155, 189, 0.4);
+
+    --color-green: #22e032;
+    --color-red: #ff2d2d;
+    --color-yellow: #ffe000;
+    --color-blue: #2f8bff;
+    --color-orange: #ff8a00;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-darker);
+    font-family: 'Droid Sans Mono', monospace;
+    color: var(--text-main);
+    overflow: hidden;
+    user-select: none;
+}
+
+/* =========================================
+   MENU UI (Impecável - mantido intacto)
+   ========================================= */
+#menu-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.sidebar {
+    width: 50px;
+    background-color: var(--bg-sidebar);
+    display: flex;
+    justify-content: center;
+    padding-top: 15px;
+    border-right: 2px solid #000;
+}
+
+#gear-icon {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    fill: #cccccc;
+}
+
+#gear-icon:hover {
+    transform: rotate(90deg) scale(1.1);
+}
+
+.song-list-container {
+    flex: 3;
+    background-color: var(--bg-dark);
+    padding: 20px;
+    border-right: 5px solid #1a1a1a;
+    overflow-y: auto;
+}
+
+#song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.song-item {
+    display: flex;
+    align-items: center;
+    background-color: #444;
+    padding: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+.song-item:hover, .song-item.active {
+    background-color: #555;
+    transform: translateX(10px);
+}
+
+.song-item img {
+    width: 70px;
+    height: 70px;
+    border-radius: 8px;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.song-info { display: flex; flex-direction: column; }
+.song-info h2 { margin: 0; font-size: 1.2rem; font-weight: normal; }
+.song-info p { margin: 3px 0 0 0; font-size: 0.9rem; color: var(--text-sub); }
+
+.song-details-container {
+    flex: 2;
+    background-color: #2b2b2b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.details-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#detail-cover {
+    width: 300px;
+    height: 300px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    margin-bottom: 30px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+    display: none;
+}
+
+#detail-cover:hover { transform: scale(1.03); }
+
+#detail-title {
+    background-color: var(--dynamic-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+    font-weight: normal;
+    transition: background-color 0.5s ease;
+}
+
+#btn-jogar {
+    background-color: #0a1f0a;
+    color: white;
+    border: none;
+    padding: 15px 60px;
+    font-size: 1.5rem;
+    font-family: inherit;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+#btn-jogar:hover {
+    background-color: #123512;
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   TRANSIÇÕES E MODAL
+   ========================================= */
+#fade-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: black;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1s ease;
+    z-index: 999;
+}
+
+#countdown-display {
+    position: fixed;
+    top: 42%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 8rem;
+    color: white;
+    z-index: 1000;
+    display: none;
+    text-shadow: 0 0 25px rgba(255,255,255,0.6);
+    font-weight: bold;
+}
+
+#settings-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.settings-content {
+    background: var(--bg-dark);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.key-config { margin: 10px 0; display: flex; justify-content: space-between; align-items: center; width: 200px; }
+.key-config input { width: 30px; text-align: center; text-transform: uppercase; font-family: inherit; }
+.settings-content button { margin-top: 20px; padding: 10px 20px; font-family: inherit; cursor: pointer; }
+
+/* =========================================
+   GAMEPLAY UI (ESTILO GUITAR HERO / GUITAR FLASH)
+   ========================================= */
+#game-container {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: #060606;
+    overflow: hidden;
+    z-index: 5;
+}
+
+/* Fundo do palco com silhuetas da banda */
+.stage-background {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 55% 34% at 50% 10%, rgba(60,62,72,0.40) 0%, rgba(0,0,0,0) 62%),
+        radial-gradient(circle at 50% 32%, #242428 0%, #0a0a0c 58%, #000 100%);
+    z-index: 1;
+}
+
+.stage-background::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: var(--stage-silhouette);
+    background-repeat: no-repeat;
+    background-position: center 2%;
+    background-size: 95% auto;
+    opacity: 0.9;
+    z-index: 2;
+}
+
+/* Luzes de palco suaves no topo */
+.stage-lights {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 45%;
+    z-index: 2;
+    background:
+        radial-gradient(circle at 20% 0%, rgba(255,80,80,0.10) 0%, transparent 35%),
+        radial-gradient(circle at 50% 0%, rgba(120,170,255,0.10) 0%, transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(255,210,90,0.10) 0%, transparent 35%);
+    pointer-events: none;
+}
+
+/* Perspectiva da pista */
+.perspective-wrap {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 640px;
+    height: 100%;
+    perspective: 560px;
+    perspective-origin: 50% 100%;
+    z-index: 3;
+}
+
+.highway {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 150%;
+    transform-origin: bottom center;
+    transform: rotateX(49deg);
+    transform-style: preserve-3d;
+    background:
+        linear-gradient(to bottom, rgba(18,18,20,0.0) 0%, rgba(30,30,33,0.9) 18%, rgba(55,55,60,0.98) 100%);
+    border-left: 6px solid rgba(90,90,95,0.55);
+    border-right: 6px solid rgba(90,90,95,0.55);
+    box-shadow: inset 0 0 70px rgba(0,0,0,0.9);
+    overflow: hidden;
+}
+
+/* Linhas divisórias das pistas */
+.lane-line {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(255,255,255,0.10);
+}
+.lane-line.l1 { left: 20%; }
+.lane-line.l2 { left: 40%; }
+.lane-line.l3 { left: 60%; }
+.lane-line.l4 { left: 80%; }
+
+/* Barra do traste (strike line) */
+.strike-line {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 8px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.35), rgba(255,255,255,0.05));
+    box-shadow: 0 0 14px rgba(255,255,255,0.3);
+}
+
+/* Camada das notas (dentro da pista em perspectiva) */
+#highway-notes {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+}
+
+/* Zona de acerto / botões (ficam na pista, na base) */
+.hit-zone {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 90px;
+}
+
+.fret-btn {
+    position: absolute;
+    top: 0;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    background: radial-gradient(circle at 50% 38%, #4a4a4e 0%, #1d1d20 60%, #0a0a0b 100%);
+    border: 6px solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 7px 16px rgba(0,0,0,0.9), inset 0 3px 7px rgba(0,0,0,0.85);
+    transition: transform 0.06s ease;
+    box-sizing: border-box;
+}
+
+.fret-inner {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #555 0%, #222 55%, #0d0d0d 100%);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.9);
+    transition: all 0.06s ease;
+}
+
+.fret-green  { border-color: var(--color-green); }
+.fret-red    { border-color: var(--color-red); }
+.fret-yellow { border-color: var(--color-yellow); }
+.fret-blue   { border-color: var(--color-blue); }
+.fret-orange { border-color: var(--color-orange); }
+
+/* Pressionado */
+.fret-btn.pressed { transform: translateX(-50%) scale(0.86); }
+.fret-btn.pressed.fret-green  .fret-inner { background: var(--color-green);  box-shadow: 0 0 20px var(--color-green); }
+.fret-btn.pressed.fret-red    .fret-inner { background: var(--color-red);    box-shadow: 0 0 20px var(--color-red); }
+.fret-btn.pressed.fret-yellow .fret-inner { background: var(--color-yellow); box-shadow: 0 0 20px var(--color-yellow); }
+.fret-btn.pressed.fret-blue   .fret-inner { background: var(--color-blue);   box-shadow: 0 0 20px var(--color-blue); }
+.fret-btn.pressed.fret-orange .fret-inner { background: var(--color-orange); box-shadow: 0 0 20px var(--color-orange); }
+
+/* Flash de acerto */
+.fret-btn.hit::after {
+    content: '';
+    position: absolute;
+    inset: -14px;
+    border-radius: 50%;
+    border: 3px solid currentColor;
+    animation: hitRing 0.35s ease-out forwards;
+    pointer-events: none;
+}
+.fret-green.hit::after  { color: var(--color-green); }
+.fret-red.hit::after    { color: var(--color-red); }
+.fret-yellow.hit::after { color: var(--color-yellow); }
+.fret-blue.hit::after   { color: var(--color-blue); }
+.fret-orange.hit::after { color: var(--color-orange); }
+
+@keyframes hitRing {
+    0%   { opacity: 0.9; transform: scale(0.7); }
+    100% { opacity: 0; transform: scale(1.9); }
+}
+
+/* Notas caindo */
+.note {
+    position: absolute;
+    width: 66px;
+    height: 66px;
+    transform: translate(-50%, -50%);
+    will-change: top;
+}
+
+.note-head {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.85);
+    box-sizing: border-box;
+    box-shadow: 0 0 14px currentColor, inset 0 -6px 10px rgba(0,0,0,0.45), inset 0 5px 8px rgba(255,255,255,0.35);
+}
+.note-head::before {
+    content: '';
+    position: absolute;
+    top: 16%; left: 22%;
+    width: 36%; height: 26%;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.55);
+    filter: blur(1px);
+}
+
+.note.green  .note-head { background: radial-gradient(circle at 50% 35%, #8bff93 0%, var(--color-green) 55%, #0c8a17 100%); color: var(--color-green); }
+.note.red    .note-head { background: radial-gradient(circle at 50% 35%, #ff9b9b 0%, var(--color-red) 55%, #9c0d0d 100%); color: var(--color-red); }
+.note.yellow .note-head { background: radial-gradient(circle at 50% 35%, #fff7a0 0%, var(--color-yellow) 55%, #b0a000 100%); color: var(--color-yellow); }
+.note.blue   .note-head { background: radial-gradient(circle at 50% 35%, #a9d2ff 0%, var(--color-blue) 55%, #124b9c 100%); color: var(--color-blue); }
+.note.orange .note-head { background: radial-gradient(circle at 50% 35%, #ffce93 0%, var(--color-orange) 55%, #9c5300 100%); color: var(--color-orange); }
+
+/* Rastro de sustain */
+.note-sustain {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    width: 20px;
+    transform: translateX(-50%);
+    background: currentColor;
+    border-radius: 10px 10px 0 0;
+    opacity: 0.75;
+    box-shadow: 0 0 12px currentColor;
+}
+.note.green  .note-sustain { color: var(--color-green); }
+.note.red    .note-sustain { color: var(--color-red); }
+.note.yellow .note-sustain { color: var(--color-yellow); }
+.note.blue   .note-sustain { color: var(--color-blue); }
+.note.orange .note-sustain { color: var(--color-orange); }
+
+.note.held .note-head { box-shadow: 0 0 26px currentColor, inset 0 0 10px rgba(255,255,255,0.6); }
+
+/* Notas estreladas (Star Power) */
+.note.star .note-head {
+    border-color: #ffffff;
+    box-shadow: 0 0 20px #cfe8ff, 0 0 10px currentColor, inset 0 -6px 10px rgba(0,0,0,0.4), inset 0 5px 8px rgba(255,255,255,0.6);
+}
+.note.star .note-head::after {
+    content: '';
+    position: absolute;
+    inset: 28%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0) 70%);
+}
+.note.star .note-sustain { color: #eaf4ff; }
+
+/* =========================================
+   HUD (placar, combo, multiplicador, medidor)
+   ========================================= */
+.hud {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    pointer-events: none;
+    font-family: 'Droid Sans Mono', monospace;
+}
+
+.hud-score {
+    position: absolute;
+    top: 18px; right: 26px;
+    text-align: right;
+}
+.hud-score .score-value {
+    font-size: 2.4rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+}
+.hud-score .score-label {
+    font-size: 0.8rem;
+    color: var(--text-sub);
+    letter-spacing: 3px;
+}
+
+.hud-multiplier {
+    position: absolute;
+    top: 18px; left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+.hud-multiplier .mult-value {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #ffd23c;
+    text-shadow: 0 0 14px rgba(255,200,40,0.6);
+}
+.hud-multiplier .combo-value {
+    font-size: 0.95rem;
+    color: var(--text-sub);
+    letter-spacing: 2px;
+}
+
+/* Medidor de rock vertical (esquerda) */
+.rock-meter {
+    position: absolute;
+    left: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 6;
+    width: 20px;
+    height: 230px;
+    border-radius: 11px;
+    background: linear-gradient(to top, #c0392b 0%, #e67e22 28%, #f1c40f 55%, #2ecc71 100%);
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.7), 0 0 10px rgba(0,0,0,0.6);
+    overflow: visible;
+    opacity: 0.92;
+}
+.rock-meter .meter-mask {
+    position: absolute;
+    left: 0; top: 0; width: 100%;
+    background: rgba(8,8,8,0.82);
+    border-radius: 11px 11px 0 0;
+    height: 50%;
+    transition: height 0.25s ease;
+}
+.rock-meter .meter-marker {
+    position: absolute;
+    left: -7px;
+    width: 34px;
+    height: 4px;
+    background: #fff;
+    box-shadow: 0 0 8px rgba(255,255,255,0.8);
+    transition: bottom 0.25s ease;
+    bottom: 50%;
+}
+
+/* Feedback de acerto (Perfect/Good/Miss) */
+.feedback-text {
+    position: absolute;
+    bottom: 120px; left: 50%;
+    transform: translateX(-50%);
+    font-size: 1.6rem;
+    font-weight: bold;
+    opacity: 0;
+    z-index: 6;
+    text-shadow: 0 0 10px currentColor;
+}
+.feedback-text.show { animation: fbPop 0.6s ease-out forwards; }
+@keyframes fbPop {
+    0%   { opacity: 0; transform: translate(-50%, 10px) scale(0.8); }
+    30%  { opacity: 1; transform: translate(-50%, 0) scale(1.1); }
+    100% { opacity: 0; transform: translate(-50%, -18px) scale(1); }
+}
+
+/* =========================================
+   TELA DE RESULTADOS
+   ========================================= */
+#results-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.92);
+    text-align: center;
+}
+#results-screen h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+.results-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px 40px;
+    margin: 20px 0 30px;
+    font-size: 1.3rem;
+}
+.results-grid .label { color: var(--text-sub); text-align: right; }
+.results-grid .value { font-weight: bold; text-align: left; }
+#results-screen .final-score {
+    font-size: 3.4rem;
+    font-weight: bold;
+    color: #ffd23c;
+    text-shadow: 0 0 18px rgba(255,200,40,0.5);
+    margin-bottom: 8px;
+}
+#btn-back-menu {
+    background-color: #0a1f0a;
+    color: white;
+    border: none;
+    padding: 14px 50px;
+    font-size: 1.3rem;
+    font-family: inherit;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+#btn-back-menu:hover { background-color: #123512; transform: translateY(-2px); }
+
+/* =========================================
+   STAR POWER
+   ========================================= */
+.hud-starpower {
+    position: absolute;
+    top: 86px; right: 26px;
+    width: 220px;
+    text-align: right;
+}
+.hud-starpower .sp-label {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    color: var(--text-sub);
+    margin-bottom: 4px;
+}
+.hud-starpower .sp-bar {
+    position: relative;
+    height: 12px;
+    border-radius: 7px;
+    background: rgba(255,255,255,0.08);
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.7);
+    overflow: hidden;
+    border: 1px solid rgba(120,180,255,0.25);
+}
+.hud-starpower .sp-fill {
+    position: absolute;
+    left: 0; top: 0; height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, #2f6bff, #6fd0ff);
+    box-shadow: 0 0 10px rgba(90,170,255,0.7);
+    transition: width 0.12s linear;
+}
+.hud-starpower.ready .sp-bar { border-color: rgba(120,200,255,0.9); box-shadow: inset 0 0 6px rgba(0,0,0,0.6), 0 0 12px rgba(90,170,255,0.6); }
+.hud-starpower.ready .sp-label { color: #8fd0ff; }
+.hud-starpower.active .sp-fill { background: linear-gradient(to right, #ffffff, #bfe6ff); }
+
+/* Glow na pista quando o Star Power está ativo */
+#game-container.star-active .highway {
+    box-shadow: inset 0 0 90px rgba(80,160,255,0.55);
+    border-left-color: rgba(120,190,255,0.9);
+    border-right-color: rgba(120,190,255,0.9);
+}
+#game-container.star-active .stage-lights {
+    background: radial-gradient(circle at 50% 0%, rgba(120,180,255,0.22) 0%, transparent 45%);
+}
+.star-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 100%, rgba(90,160,255,0.18) 0%, transparent 60%);
+    transition: opacity 0.3s ease;
+}
+#game-container.star-active .star-overlay { opacity: 1; }
+
+/* =========================================
+   TELA DE CALIBRAÇÃO
+   ========================================= */
+#calibration-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: #0b0b0d;
+    text-align: center;
+}
+#calibration-screen h2 { margin: 0 0 6px; font-size: 1.8rem; }
+#calibration-screen .cal-sub { color: var(--text-sub); max-width: 520px; font-size: 0.95rem; line-height: 1.5; margin-bottom: 22px; }
+
+.cal-lane {
+    position: relative;
+    width: 110px;
+    height: 360px;
+    background: linear-gradient(to bottom, #141417, #26262b);
+    border: 2px solid #333;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+}
+.cal-target {
+    position: absolute;
+    left: 50%;
+    bottom: 36px;
+    transform: translate(-50%, 50%);
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    border: 6px solid var(--color-green);
+    background: radial-gradient(circle at 50% 38%, #4a4a4e, #0a0a0b);
+    box-shadow: 0 0 14px rgba(0,0,0,0.8);
+}
+.cal-target.flash { box-shadow: 0 0 22px var(--color-green); }
+#cal-notes { position: absolute; inset: 0; }
+.cal-note {
+    position: absolute;
+    left: 50%;
+    width: 60px; height: 60px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 35%, #8bff93 0%, var(--color-green) 55%, #0c8a17 100%);
+    border: 3px solid rgba(255,255,255,0.85);
+    box-shadow: 0 0 12px var(--color-green);
+}
+
+.cal-stats { margin: 22px 0 8px; font-size: 1.1rem; }
+.cal-stats .cal-result { font-size: 1.8rem; font-weight: bold; color: #8fd0ff; }
+.cal-stats .label { color: var(--text-sub); }
+
+.cal-buttons { margin-top: 22px; display: flex; gap: 14px; }
+.cal-buttons button {
+    padding: 12px 28px;
+    font-family: inherit;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: #fff;
+    transition: all 0.2s ease;
+}
+#btn-cal-start { background: #0a1f0a; }
+#btn-cal-start:hover { background: #123512; }
+#btn-cal-save { background: #123a5c; }
+#btn-cal-save:hover { background: #1a4f7a; }
+#btn-cal-save:disabled { opacity: 0.4; cursor: not-allowed; }
+#btn-cal-close { background: #3a2323; }
+#btn-cal-close:hover { background: #512f2f; }
+
+.settings-content #btn-calibrate {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    background: #123a5c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.settings-content #btn-calibrate:hover { background: #1a4f7a; }
