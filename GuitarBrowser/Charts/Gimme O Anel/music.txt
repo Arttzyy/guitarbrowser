@@ -1,0 +1,4 @@
+name: Gimme O Anel
+artist: Charlie Brown Jr
+year: 1997
+cover: capa.jpg
