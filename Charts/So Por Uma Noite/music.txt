@@ -1,0 +1,4 @@
+name: Só Por Uma Noite
+artist: Charlie Brown Jr
+year: 2002
+cover: capa.jpg
